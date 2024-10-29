@@ -1,9 +1,9 @@
-import db from '../clients/db.mysql.js';
+import connection from '../clients/db.mysql.js';
 
 export default {
 	createItem: async name => {
 		try {
-			await db.execute('INSERT INTO items (name) VALUES (?)', [
+			await connection.execute('INSERT INTO items (name) VALUES (?)', [
 				JSON.stringify(name),
 			]);
 		} catch (error) {
@@ -13,7 +13,7 @@ export default {
 
 	createCombinations: async combinations => {
 		try {
-			const [result] = await db.execute(
+			const [result] = await connection.execute(
 				'INSERT INTO combinations (combination) VALUES (?)',
 				[JSON.stringify(combinations)]
 			);
@@ -22,9 +22,10 @@ export default {
 			console.log(error);
 		}
 	},
+
 	createResponse: async (combinationId, data) => {
 		try {
-			await db.execute(
+			await connection.execute(
 				'INSERT INTO responses (combinationId, response) VALUES (?, ?)',
 				[combinationId, JSON.stringify(data)]
 			);

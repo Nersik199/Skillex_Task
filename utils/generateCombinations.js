@@ -1,30 +1,26 @@
 function generateCombinations(items, length) {
-	const uniquePrefixes = [];
 	const result = [];
+	const upi = []; // uniquePrefixItems
 
-	for (const item of items) {
-		if (!uniquePrefixes.includes(item[0])) {
-			uniquePrefixes.push(item[0]);
-		}
-	}
-
-	const filteredItems = uniquePrefixes.map(prefix =>
-		items.filter(item => item[0] === prefix)
-	);
+	items.forEach(item => {
+		const prefix = item[0];
+		const prefixGroup = upi.find(group => {
+			group[0]?.[0] === prefix;
+		});
+		prefixGroup ? prefixGroup.push(item) : upi.push([item]);
+	});
 
 	function helper(path, start) {
 		if (path.length === length) {
 			result.push([...path]);
 			return;
 		}
-
-		for (let i = start; i < filteredItems.length; i++) {
-			for (const item of filteredItems[i]) {
+		for (let i = start; i < upi.length; i++) {
+			for (const item of upi[i]) {
 				helper([...path, item], i + 1);
 			}
 		}
 	}
-
 	helper([], 0);
 	return result;
 }

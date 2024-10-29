@@ -1,7 +1,10 @@
-import db from './clients/db.mysql.js';
+import pool from './clients/db.mysql.js';
+
+let db = await pool.getConnection();
 
 (async () => {
 	try {
+		await db.beginTransaction();
 		await db.execute(`
             CREATE TABLE IF NOT EXISTS items (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -26,8 +29,12 @@ import db from './clients/db.mysql.js';
             )
         `);
 
+		await db.commit();
 		console.log('DB tables initialized');
 	} catch (error) {
+		if (db) await db.rollback();
 		console.error('Error initializing DB tables:', error);
+	} finally {
+		if (db) db.release();
 	}
 })();
